@@ -1,11 +1,10 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
-from datetime import datetime, timedelta
+from datetime import datetime
 
-# --- CONFIGURAÇÃO DA PÁGINA ---
+# --- 1. CONFIGURAÇÃO DA PÁGINA (Do app.py) ---
 st.set_page_config(
     page_title="Dashboard RH - People Analytics",
     page_icon="👥",
@@ -13,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- ESTILO CSS PERSONALIZADO (Para deixar mais "clean") ---
+# --- ESTILO CSS (Do app.py) ---
 st.markdown("""
 <style>
     [data-testid="stMetricValue"] {
@@ -25,223 +24,216 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- FUNÇÃO PARA GERAR DADOS FICTÍCIOS (MOCK DATA) ---
+# --- 2. DADOS (Do Teste.py) ---
+# Nota: Incluí os dados que estavam no ficheiro. Se houver mais, adicione à lista.
+Dados_teste = [
+  { "codcid": 81388, "nomcid": "BEBEDOURO", "admissao": "2020-04-09T08:38:22.040Z", "demissao": "None", "empregis": "None", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 88684, "nomcid": "SOROCABA", "admissao": "2021-07-19T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 21415, "nomcid": "QUIRINOPOLIS", "admissao": "2020-08-10T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 85448, "nomcid": "MOGI DAS CRUZES", "admissao": "2020-11-03T00:00:00.000Z", "demissao": "None", "empregis": "SMOKERS", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 83518, "nomcid": "GUARATINGUETA", "admissao": "2021-03-22T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 88862, "nomcid": "TANABI", "admissao": "2021-03-01T00:00:00.000Z", "demissao": "None", "empregis": "LIKEBRANDS", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 88684, "nomcid": "SOROCABA", "admissao": "2024-02-20T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 81388, "nomcid": "BEBEDOURO", "admissao": "2021-03-22T00:00:00.000Z", "demissao": "None", "empregis": "SOLLUS", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 18619, "nomcid": "ARAGARCAS", "admissao": "2021-10-18T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 18546, "nomcid": "APARECIDA DE GOIANIA", "admissao": "2021-12-14T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 39217, "nomcid": "UBERLANDIA", "admissao": "2021-12-13T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - MG", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 88684, "nomcid": "SOROCABA", "admissao": "2022-04-18T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 86568, "nomcid": "PIEDADE", "admissao": "2023-01-03T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 81388, "nomcid": "BEBEDOURO", "admissao": "2023-01-03T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 31534, "nomcid": "JOAO PINHEIRO", "admissao": "2023-04-03T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - MG", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 21474, "nomcid": "RIO VERDE", "admissao": "2023-03-06T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 88412, "nomcid": "SAO PAULO", "admissao": "2023-03-06T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 81345, "nomcid": "BATATAIS", "admissao": "2023-11-06T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 81086, "nomcid": "AVARE", "admissao": "2023-11-21T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 81370, "nomcid": "BAURU", "admissao": "2024-01-16T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 34010, "nomcid": "PATOS DE MINAS", "admissao": "2024-04-16T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - MG", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 80829, "nomcid": "ARACATUBA", "admissao": "2024-04-16T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 18546, "nomcid": "APARECIDA DE GOIANIA", "admissao": "2024-09-03T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 41378, "nomcid": "TRES LAGOAS", "admissao": "2024-09-23T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - MS", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 81990, "nomcid": "CAMPINAS", "admissao": "2019-11-11T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 21784, "nomcid": "SAO LUIS DE MONTES BELOS", "admissao": "2021-02-01T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 81388, "nomcid": "BEBEDOURO", "admissao": "2022-06-06T00:00:00.000Z", "demissao": "None", "empregis": "SOLLUS", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 88412, "nomcid": "SAO PAULO", "admissao": "2024-02-06T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 88412, "nomcid": "SAO PAULO", "admissao": "2022-10-03T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 83631, "nomcid": "HORTOLANDIA", "admissao": "2024-07-02T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 39217, "nomcid": "UBERLANDIA", "admissao": "2024-10-01T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - MG", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 19917, "nomcid": "GOIAS", "admissao": "2023-01-16T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 81388, "nomcid": "BEBEDOURO", "admissao": "2021-03-22T00:00:00.000Z", "demissao": "None", "empregis": "LIKEBRANDS", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 88412, "nomcid": "SAO PAULO", "admissao": "2022-03-14T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 40851, "nomcid": "NOVA ANDRADINA", "admissao": "2024-11-05T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - MS", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 56995, "nomcid": "LONDRINA", "admissao": "2024-11-01T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 18511, "nomcid": "ANAPOLIS", "admissao": "2021-03-22T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 19321, "nomcid": "CERES", "admissao": "2021-09-20T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 21318, "nomcid": "PORANGATU", "admissao": "2021-11-22T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 20818, "nomcid": "NIQUELANDIA", "admissao": "2023-12-04T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 88412, "nomcid": "SAO PAULO", "admissao": "2024-10-15T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 83186, "nomcid": "FRANCISCO MORATO", "admissao": "2022-10-17T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 39217, "nomcid": "UBERLANDIA", "admissao": "2024-12-10T00:00:00.000Z", "demissao": "None", "empregis": "TBSTORE - ADM", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 21474, "nomcid": "RIO VERDE", "admissao": "2024-06-18T00:00:00.000Z", "demissao": "None", "empregis": "TBSTORE - ADM GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 20303, "nomcid": "JATAI", "admissao": "2023-09-04T00:00:00.000Z", "demissao": "None", "empregis": "TBSTORE - ADM GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 39209, "nomcid": "UBERABA", "admissao": "2023-10-02T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - MG", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 83097, "nomcid": "FERNANDOPOLIS", "admissao": "2023-02-02T00:00:00.000Z", "demissao": "None", "empregis": "TBSTORE - JBZ", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 88323, "nomcid": "SAO JOSE DO RIO PRETO", "admissao": "2023-02-24T00:00:00.000Z", "demissao": "None", "empregis": "TBSTORE - JBZ", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 20575, "nomcid": "MINEIROS", "admissao": "2025-01-07T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 87599, "nomcid": "SALTO", "admissao": "2025-02-04T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 18546, "nomcid": "APARECIDA DE GOIANIA", "admissao": "2024-02-20T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 83178, "nomcid": "FRANCA", "admissao": "2022-09-02T00:00:00.000Z", "demissao": "None", "empregis": "TBSTORE - CTR", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 81990, "nomcid": "CAMPINAS", "admissao": "2025-02-18T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 86665, "nomcid": "PIRACICABA", "admissao": "2021-07-19T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 80616, "nomcid": "AMERICANA", "admissao": "2023-06-05T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - SP", "codempresa": 1, "descricao": "CIFAL COMERCIAL " },
+  { "codcid": 19070, "nomcid": "CALDAS NOVAS", "admissao": "2025-03-11T00:00:00.000Z", "demissao": "None", "empregis": "CIFAL - GO", "codempresa": 1, "descricao": "CIFAL COMERCIAL " }
+  # ... Cole o restante dos dados aqui se a lista for maior
+]
+
+# --- 3. PROCESSAMENTO DOS DADOS ---
 @st.cache_data
-def get_data():
-    meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+def load_and_process_data(data):
+    df = pd.DataFrame(data)
     
-    data = []
-    base_colaboradores = 350
+    # Converter datas
+    df['admissao'] = pd.to_datetime(df['admissao'], errors='coerce')
     
-    for mes in meses:
-        admissoes = np.random.randint(5, 15)
-        desligamentos = np.random.randint(2, 12)
-        base_colaboradores = base_colaboradores + admissoes - desligamentos
-        turnover = (desligamentos / base_colaboradores) * 100
+    # Tratar coluna demissao (string 'None' para datetime NaT)
+    df['demissao'] = df['demissao'].replace('None', pd.NaT)
+    df['demissao'] = pd.to_datetime(df['demissao'], errors='coerce')
+    
+    return df
+
+df_raw = load_and_process_data(Dados_teste)
+
+# --- 4. FILTROS (Do Teste.py) NA SIDEBAR ---
+st.sidebar.header("🔍 Filtros")
+
+# Filtro Empresa
+empresa_opcoes = ["Todas"] + sorted(
+    df_raw["descricao"].dropna().astype(str).unique().tolist()
+)
+empresa_selecionada = st.sidebar.selectbox("Empresa", options=empresa_opcoes)
+
+# Filtro Cidade
+cidade_opcoes = ["Todas"] + sorted(
+    df_raw["nomcid"].dropna().astype(str).unique().tolist()
+)
+cidade_selecionada = st.sidebar.selectbox("Cidade", options=cidade_opcoes)
+
+# Aplicar Filtros
+df_filtered = df_raw.copy()
+
+if empresa_selecionada != "Todas":
+    df_filtered = df_filtered[df_filtered["descricao"] == empresa_selecionada]
+
+if cidade_selecionada != "Todas":
+    df_filtered = df_filtered[df_filtered["nomcid"] == cidade_selecionada]
+
+# --- 5. AGREGAÇÃO DE DADOS PARA O DASHBOARD ---
+# Precisamos transformar os dados individuais em dados mensais para os gráficos
+def aggregate_monthly(df_in):
+    # Definir range de datas (baseado nos dados ou ano atual)
+    # Vamos pegar o intervalo de dados presentes
+    if df_in.empty:
+        return pd.DataFrame()
         
-        data.append({
-            "Mês": mes,
-            "Total Colaboradores": base_colaboradores,
-            "Admissões": admissoes,
-            "Desligamentos": desligamentos,
-            "Turnover (%)": round(turnover, 2),
-            "Meta Turnover": 3.0
+    min_date = df_in['admissao'].min()
+    max_date = datetime.now() # ou df_in['admissao'].max()
+    
+    # Criar índice mensal
+    dates = pd.date_range(start=min_date, end=max_date, freq='MS')
+    
+    results = []
+    
+    for date in dates:
+        month_start = date
+        month_end = date + pd.offsets.MonthEnd(0)
+        
+        # Admissões no mês
+        admissoes = df_in[
+            (df_in['admissao'] >= month_start) & 
+            (df_in['admissao'] <= month_end)
+        ].shape[0]
+        
+        # Desligamentos no mês
+        desligamentos = df_in[
+            (df_in['demissao'] >= month_start) & 
+            (df_in['demissao'] <= month_end)
+        ].shape[0]
+        
+        # Total Colaboradores Ativos no final do mês
+        # Admitidos antes ou durante o mês E (não demitidos OU demitidos depois do mês)
+        ativos = df_in[
+            (df_in['admissao'] <= month_end) & 
+            ((df_in['demissao'].isna()) | (df_in['demissao'] > month_end))
+        ].shape[0]
+        
+        results.append({
+            'Mês': month_start.strftime('%b/%Y'),
+            'Data': month_start,
+            'Total Colaboradores': ativos,
+            'Admissões': admissoes,
+            'Desligamentos': desligamentos,
+            'Turnover %': round((desligamentos / ativos * 100), 2) if ativos > 0 else 0
         })
-    
-    return pd.DataFrame(data)
+        
+    return pd.DataFrame(results)
 
-df = get_data()
+df_dashboard = aggregate_monthly(df_filtered)
 
-# --- BARRA LATERAL (FILTROS) ---
-st.sidebar.header("🎛️ Filtros Globais")
+# --- 6. VISUALIZAÇÃO (KPIs e Gráficos do app.py) ---
 
-# Filtros visuais simulados (na vida real filtrariam o DataFrame)
-st.sidebar.subheader("Estrutura Organizacional")
-empresas = st.sidebar.multiselect(
-    "Empresa",
-    ["Asteca", "Autopetro", "Cifal", "Sollus", "Transveloz"],
-    default=["Asteca", "Cifal"]
-)
+# Calcular métricas gerais (Total Atual)
+if not df_dashboard.empty:
+    total_colaboradores = df_dashboard.iloc[-1]['Total Colaboradores']
+    total_admissoes = df_dashboard['Admissões'].sum()
+    total_desligamentos = df_dashboard['Desligamentos'].sum()
+    media_turnover = df_dashboard['Turnover %'].mean()
+else:
+    total_colaboradores = 0
+    total_admissoes = 0
+    total_desligamentos = 0
+    media_turnover = 0
 
-areas = st.sidebar.multiselect(
-    "Área",
-    ["Administrativo", "Comercial", "Operacional", "TI", "Logística"],
-    default=["Comercial", "Operacional"]
-)
-
-centros_custo = st.sidebar.multiselect(
-    "Centro de Custo",
-    ["Adm. Pessoal", "Vendas", "Fabrica 01", "Fabrica 02"],
-    default=["Vendas", "Fabrica 01"]
-)
-
-st.sidebar.markdown("---")
-periodo = st.sidebar.slider(
-    "Período de Análise",
-    min_value=datetime(2025, 1, 1),
-    max_value=datetime(2025, 12, 31),
-    value=(datetime(2025, 1, 1), datetime(2025, 12, 31)),
-    format="DD/MM/YY"
-)
-
-# --- CABEÇALHO ---
-st.title("📊 Dashboard de People Analytics")
-st.markdown(f"**Visão Geral:** Acompanhamento de Headcount e Turnover ({', '.join(empresas)})")
-st.markdown("---")
-
-# --- KPIs (INDICADORES DE TOPO) ---
-# Cálculo dos totais para exibir nos cartões
-total_colaboradores = df["Total Colaboradores"].iloc[-1] # Último mês
-total_desligamentos = df["Desligamentos"].sum()
-media_turnover = df["Turnover (%)"].mean()
-meta_global = 36.0 # Exemplo da imagem
-
+# Exibir Métricas
 col1, col2, col3, col4 = st.columns(4)
+col1.metric("Total Colaboradores", f"{total_colaboradores} 👤")
+col2.metric("Admissões (Período)", f"{total_admissoes} 🟢")
+col3.metric("Desligamentos (Período)", f"{total_desligamentos} 🔴")
+col4.metric("Turnover Médio", f"{media_turnover:.1f}% 📉")
 
-with col1:
-    st.metric(label="👥 Total Colaboradores (Atual)", value=total_colaboradores, delta="5 vs mês anterior")
-with col2:
-    st.metric(label="🔻 Total Desligamentos (Ano)", value=total_desligamentos, delta="-2% vs ano passado")
-with col3:
-    st.metric(label="🔄 Turnover Médio", value=f"{media_turnover:.2f}%", delta=f"{media_turnover - 3.0:.1f}p.p.", delta_color="inverse")
-with col4:
-    st.metric(label="🎯 Meta Anual", value=f"{meta_global}%")
+# Layout Gráficos
+col_charts1, col_charts2 = st.columns(2)
 
-st.markdown("---")
-
-# --- LAYOUT PRINCIPAL ---
-# Dividir em: Gráfico Principal (Esquerda) e Medidores (Direita)
-col_main, col_gauge = st.columns([2, 1])
-
-with col_main:
-    st.subheader("📈 Evolução: Headcount vs Turnover")
-    
-    # Criar gráfico combinado (Combo Chart) com Plotly
-    fig_combo = go.Figure()
-
-    # Barras: Total de Colaboradores
-    fig_combo.add_trace(go.Bar(
-        x=df["Mês"],
-        y=df["Total Colaboradores"],
-        name="Total Colaboradores",
-        marker_color='#2E86C1',
-        yaxis='y'
-    ))
-
-    # Linha: Turnover
-    fig_combo.add_trace(go.Scatter(
-        x=df["Mês"],
-        y=df["Turnover (%)"],
-        name="Turnover %",
-        mode='lines+markers+text',
-        text=df["Turnover (%)"],
-        textposition="top center",
-        marker=dict(size=8, color='#E74C3C'),
-        line=dict(width=3, color='#E74C3C'),
-        yaxis='y2'
-    ))
-
-    # Configuração dos dois eixos Y
-    fig_combo.update_layout(
-        template="plotly_dark",
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        height=450,
-        margin=dict(l=20, r=20, t=40, b=20),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        yaxis=dict(
-            title="Nº Colaboradores",
-            showgrid=False
-        ),
-        yaxis2=dict(
-            title="Turnover (%)",
-            overlaying='y',
-            side='right',
-            showgrid=False
+if not df_dashboard.empty:
+    with col_charts1:
+        st.subheader("Evolução do Headcount")
+        fig_line = px.line(
+            df_dashboard, 
+            x='Mês', 
+            y='Total Colaboradores', 
+            markers=True,
+            line_shape='spline'
         )
-    )
-    
-    st.plotly_chart(fig_combo, use_container_width=True)
+        fig_line.update_traces(line_color='#3498db', line_width=3)
+        fig_line.update_layout(height=350, margin=dict(l=20, r=20, t=30, b=20))
+        st.plotly_chart(fig_line, use_container_width=True)
 
-with col_gauge:
-    st.subheader("🎯 Metas de Turnover")
-    
-    # Gráfico de Velocímetro (Gauge Chart) 1
-    fig_gauge1 = go.Figure(go.Indicator(
-        mode = "gauge+number+delta",
-        value = 47.03,
-        domain = {'x': [0, 1], 'y': [0, 1]},
-        title = {'text': "Turnover Geral (%)", 'font': {'size': 18}},
-        delta = {'reference': 36.0, 'increasing': {'color': "red"}},
-        gauge = {
-            'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "white"},
-            'bar': {'color': "#3498DB"},
-            'bgcolor': "white",
-            'borderwidth': 2,
-            'bordercolor': "gray",
-            'steps': [
-                {'range': [0, 36], 'color': "rgba(0, 255, 0, 0.3)"},
-                {'range': [36, 100], 'color': "rgba(255, 0, 0, 0.3)"}],
-            'threshold': {
-                'line': {'color': "red", 'width': 4},
-                'thickness': 0.75,
-                'value': 36.0}
-        }
-    ))
-    fig_gauge1.update_layout(height=250, margin=dict(l=20, r=20, t=30, b=20), paper_bgcolor='rgba(0,0,0,0)')
-    st.plotly_chart(fig_gauge1, use_container_width=True)
+    with col_charts2:
+        st.subheader("Admissões vs Desligamentos")
+        fig_bar = go.Figure(data=[
+            go.Bar(name='Admissões', x=df_dashboard['Mês'], y=df_dashboard['Admissões'], marker_color='#2ecc71'),
+            go.Bar(name='Desligamentos', x=df_dashboard['Mês'], y=df_dashboard['Desligamentos'], marker_color='#e74c3c')
+        ])
+        fig_bar.update_layout(barmode='group', height=350, margin=dict(l=20, r=20, t=30, b=20))
+        st.plotly_chart(fig_bar, use_container_width=True)
+else:
+    st.info("Sem dados para exibir com os filtros selecionados.")
 
-    # Gráfico de Velocímetro (Gauge Chart) 2
-    fig_gauge2 = go.Figure(go.Indicator(
-        mode = "gauge+number",
-        value = 38.53,
-        title = {'text': "Sem Reduções (%)", 'font': {'size': 18}},
-        gauge = {
-            'axis': {'range': [0, 100]},
-            'bar': {'color': "#F1C40F"},
-            'steps': [
-                {'range': [0, 36], 'color': "gray"}
-            ],
-            'threshold': {
-                'line': {'color': "red", 'width': 4},
-                'thickness': 0.75,
-                'value': 36.0}
-        }
-    ))
-    fig_gauge2.update_layout(height=250, margin=dict(l=20, r=20, t=30, b=20), paper_bgcolor='rgba(0,0,0,0)')
-    st.plotly_chart(fig_gauge2, use_container_width=True)
-
-# --- TABELA DETALHADA ---
-st.markdown("### 📋 Detalhamento Mensal")
-
-# Usando st.dataframe com column_config para formatação visual sem depender do matplotlib
+# --- 7. TABELA DETALHADA ---
+st.markdown("### 📋 Detalhamento dos Colaboradores (Dados Filtrados)")
 st.dataframe(
-    df,
+    df_filtered[['codcid', 'nomcid', 'admissao', 'demissao', 'empregis', 'descricao']],
     use_container_width=True,
-    hide_index=True,
     column_config={
-        "Mês": st.column_config.TextColumn("Mês"),
-        "Total Colaboradores": st.column_config.NumberColumn(
-            "Total Colaboradores",
-            format="%d 👤"
-        ),
-        "Admissões": st.column_config.NumberColumn(
-            "Admissões",
-            format="%d 🟢"
-        ),
-        "Desligamentos": st.column_config.NumberColumn(
-            "Desligamentos",
-            format="%d 🔴"
-        ),
-        "Turnover (%)": st.column_config.ProgressColumn(
-            "Turnover (%)",
-            format="%.2f%%",
-            min_value=0,
-            max_value=10,  # Ajuste conforme o range esperado
-        ),
-        "Meta Turnover": st.column_config.NumberColumn(
-            "Meta (%)",
-            format="%.1f%%"
-        ),
+        "admissao": st.column_config.DateColumn("Admissão", format="DD/MM/YYYY"),
+        "demissao": st.column_config.DateColumn("Demissão", format="DD/MM/YYYY"),
     }
 )
