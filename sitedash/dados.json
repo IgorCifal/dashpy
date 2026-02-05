@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "system_name": "NexusStore_DB",
+    "total_records": 1000,
+    "generated_at": "2026-02-05T10:47:00Z"
+  },
+  "inventory": [
+    { "id": 1, "sku": "HW-9921", "name": "SSD NVMe 1TB", "tags": ["hardware", "storage"], "price": 450.0, "stock": 120 },
+    { "id": 2, "sku": "HW-9922", "name": "Memória RAM 16GB DDR5", "tags": ["hardware", "memory"], "price": 680.0, "stock": 85 },
+    { "id": 3, "sku": "SW-1010", "name": "Licença Windows 11 Pro", "tags": ["software", "os"], "price": 1100.0, "stock": 500 },
+    { "id": 4, "sku": "PR-5541", "name": "Cadeira Gamer Omega", "tags": ["furniture", "office"], "price": 1850.0, "stock": 15 },
+    { "id": 5, "sku": "HW-9923", "name": "Placa de Vídeo RTX 4070", "tags": ["hardware", "gpu"], "price": 4200.0, "stock": 8 },
+    { "id": 6, "sku": "AC-2210", "name": "Cabo HDMI 2.1 2m", "tags": ["accessory", "video"], "price": 85.9, "stock": 250 },
+    { "id": 7, "sku": "HW-9924", "name": "Processador i9-13900K", "tags": ["hardware", "cpu"], "price": 3100.0, "stock": 12 },
+    { "id": 8, "sku": "SW-1011", "name": "Adobe Creative Cloud 1yr", "tags": ["software", "design"], "price": 2400.0, "stock": 1000 }
+  ],
+  "customers": [
+    { "uid": "a1-b2", "user": "carlos_dev", "email": "carlos@tech.io", "level": "gold", "active": true },
+    { "uid": "c3-d4", "user": "ana_manager", "email": "ana.m@corp.com", "level": "platinum", "active": true },
+    { "uid": "e5-f6", "user": "bruno_gamer", "email": "bruno@play.net", "level": "silver", "active": false },
+    { "uid": "g7-h8", "user": "julia_art", "email": "j.silva@design.com", "level": "gold", "active": true }
+  ],
+  "system_logs": [
+    { "timestamp": "2026-02-05T08:00:01Z", "level": "INFO", "event": "User login success", "user_id": "a1-b2" },
+    { "timestamp": "2026-02-05T08:15:22Z", "level": "WARN", "event": "Low stock alert: SKU HW-9923", "user_id": "system" },
+    { "timestamp": "2026-02-05T09:10:45Z", "level": "ERROR", "event": "API Connection Timeout", "endpoint": "/v1/payments" },
+    { "timestamp": "2026-02-05T09:42:10Z", "level": "DEBUG", "event": "Cache cleared manually", "user_id": "c3-d4" }
+  ],
+  "geographic_data": {
+    "regions": [
+      { "name": "South America", "offices": ["São Paulo", "Buenos Aires", "Bogotá"] },
+      { "name": "Europe", "offices": ["Berlin", "Lisbon", "Paris"] }
+    ]
+  }
+}
